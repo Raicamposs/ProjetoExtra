@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.Kml;
+package br.com.Teste;
 
+import br.com.Kml.KmlLinhas;
+import br.com.Kml.KmlPonto;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -15,8 +17,8 @@ import java.sql.SQLException;
 public class ProjetoExtra {
 
    public static void main(String[] args) throws SQLException, IOException {
-//
-//       kmlPonto();  
+////
+       kmlPonto();
 //       banco();
 //        kmllinha();
 //
@@ -25,14 +27,14 @@ public class ProjetoExtra {
 
     public static void kmlPonto() throws SQLException, IOException {
         KmlPonto kml = new KmlPonto();
-        kml.conversorArquivo("C:\\Users\\Raiane Campos\\SkyDrive\\Projeto kml\\Linhas e Pontos de Onibus (KML)\\2014 01 30 BASE GERAL.kml");
-        kml.imprimirDados("C:\\Projeto kml");
+        kml.conversorArquivo("C:\\Users\\Raiane\\Dropbox\\Projeto Rotas de Onibus e Mapas Colaborativos\\Linhas e Pontos de Onibus (KML)\\2014 01 30 BASE GERAL.kml");
+      
 
     }
 
     public static void kmllinha() throws SQLException, IOException {
         KmlLinhas kml = new KmlLinhas();
-        kml.conversorArquivo("C:\\Users\\Raiane Campos\\SkyDrive\\Projeto kml\\Linhas e Pontos de Onibus (KML)\\02_04_2014_redetranscol.kml");
+        kml.conversorArquivo("C:\\Users\\Raiane\\Dropbox\\Projeto Rotas de Onibus e Mapas Colaborativos\\Linhas e Pontos de Onibus (KML)\\02_04_2014_redetranscol.kml");
 
     }
 //  public static void banco () throws SQLException {

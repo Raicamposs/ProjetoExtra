@@ -5,14 +5,11 @@
  */
 package br.com.Kml;
 
+import br.com.Objetos.Linha;
+import br.com.ConexaoBD.LinhaDao;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
@@ -23,12 +20,12 @@ import javax.swing.JOptionPane;
 public class KmlLinhas {
 
     private String nome;
-    private String linha, caminho, codigosSql = "";
+    private String linha;
     private float lng, lat, alt;
+    private Linha novaLinha;
+    private final LinhaDao con = new LinhaDao();
 
-    ConexaoBD conexaoAuxiliar = new ConexaoBD();
-
-    void conversorArquivo(String EndereçoEntrada) throws SQLException {
+    public void conversorArquivo(String EndereçoEntrada) throws SQLException {
 
         try (FileReader arquivo = new FileReader(EndereçoEntrada)) {
 
@@ -40,16 +37,15 @@ public class KmlLinhas {
             while (linha != null) {
 
                 linha = lerArquivo.readLine();
-                
-  
+
                 if (linha.endsWith("<Placemark>")) {
                     i++;
                     while (!linha.endsWith("</Placemark>")) {
-                       
+
                         linha = lerArquivo.readLine();
 
                         if (linha.endsWith("</name>") == true && linha.length() > 12) {
-                            separaName(linha); System.out.println(nome);
+                            separaName(linha);
                         } else {
                             if (linha.endsWith("<coordinates>") && linha.length() > 12 && !linha.endsWith("</coordinates>")) {
                                 linha = lerArquivo.readLine();
@@ -62,18 +58,16 @@ public class KmlLinhas {
                 }
                 if (linha.startsWith("</kml>")) {
                     break;
-                } 
+                }
             }
-            
-            System.out.println("Numero de linhas = " + i);
+
+            System.out.println("Numero de linhas Cadastradas = " + i);
 
         } catch (IOException endereco) {
             JOptionPane.showMessageDialog(null, "Erro na abertura do arquivo! ");
             System.exit(0);
         }
     }
-    
-     
 
     private void separaName(String texto) throws SQLException {
 
@@ -81,8 +75,10 @@ public class KmlLinhas {
             texto = texto.replaceAll("</name>", "");
             texto = texto.replaceAll("<name>", "");
             this.nome = texto.trim();
-          
+
         }
+        novaLinha = new Linha(nome);
+        con.createTableLinha(novaLinha);
     }
 
     private void separaCordenadas(String texto) throws IOException {
@@ -90,44 +86,15 @@ public class KmlLinhas {
         String[] grupo;
         grupo = texto.split(" ");
 
-        for (int j = 0; j < grupo.length; j++) {
-
-            String coordenadas = grupo[j].replace(",", " ");
+        for (String grupo1 : grupo) {
+            String coordenadas = grupo1.replace(",", " ");
             String[] cord = coordenadas.split(" ");
-
             this.lng = Float.parseFloat(cord[0]);
             this.lat = Float.parseFloat(cord[1]);
             this.alt = Float.parseFloat(cord[2]);
-
-            gerarComandosSql();
-
+            novaLinha = new Linha(lng, lat, alt, nome);
+            con.adicionaLinha(novaLinha);
         }
-
-        imprimirDados("C:\\Projeto kml\\sqls");
-        codigosSql = "";
-    }
-
-    private void gerarComandosSql() {
-        String sql = ("insert into " + nome + "(lat,lng,alt values (" + lat + "," + lng + "," + alt + ");");
-        codigosSql += " \n " + sql;
-        System.out.println(codigosSql);
-
-    }
-
-    private String enderecoSaida(String Caminho, String nome) {
-        this.caminho = Caminho + "\\" + nome + ".txt";
-        return this.caminho;
-    }
-
-    private void imprimirDados(String Caminho)
-            throws FileNotFoundException, IOException {
-
-        OutputStream os = new FileOutputStream(enderecoSaida(Caminho, this.nome));
-        OutputStreamWriter osw = new OutputStreamWriter(os);
-        BufferedWriter bw = new BufferedWriter(osw);
-        bw.write(codigosSql);
-        bw.newLine();
-        bw.close();
 
     }
 
