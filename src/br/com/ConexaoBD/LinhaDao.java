@@ -15,9 +15,10 @@ import java.sql.SQLException;
  *
  * @author Raiane
  */
+// a conexão com o banco de dados
 public class LinhaDao {
 
-    // a conexão com o banco de dados
+    /
     private final Connection connection;
     private PreparedStatement stmt;
     private ResultSet rs;
@@ -33,7 +34,7 @@ public class LinhaDao {
                 + "values (?,?,?)";
 
         try {
-            // seta os valores
+            
             try ( // prepared statement para inserção
                     PreparedStatement novoStmt = connection.prepareStatement(sql)) {
                 // seta os valores
